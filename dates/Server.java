@@ -1,12 +1,21 @@
-package talks;
+package dates;
 
 import java.io.*;
 import java.net.*;
+import java.sql.*;
 
 
-public class TalkServer {
+public class Server {
 	public static void main(String args[]) {
 		try {
+		    String url="jdbc:mysql://localhost/Time_db";
+		    String user="root";
+		    String pwd="89npc650a";
+		    
+		    //加载驱动，这一句也可写为：Class.forName("com.mysql.jdbc.Driver");
+		    Class.forName("com.mysql.jdbc.Driver").newInstance();
+		    //建立到MySQL的连接
+		    Connection conn = DriverManager.getConnection(url,user, pwd);
 			ServerSocket server = null;
 			try {
 				server = new ServerSocket(4700);
@@ -29,18 +38,10 @@ public class TalkServer {
 			while (true) {
 				String rev = is.readLine();
 				if(rev.equals("1")){
-					boolean res = User.regist();
-					if(res == true){
-						os.println("创建成功");
-						os.flush();
-					}
+					User.log(socket,conn);				
 				}
 				if(rev.equals("2")){
-					boolean res = User.log();
-					if(res == true){
-						os.println("登陆成功");
-						os.flush();
-					}
+					User.regist();
 				}
 				if(rev.equals("a")){
 					boolean res = Time.update();
@@ -67,12 +68,7 @@ public class TalkServer {
 					os.println("注销成功");
 					os.flush();
 				}
-				if(rev.equals("bye")){
-					boolean res = User.log();
-					if(res == true){
-						os.println("退出成功");
-						os.flush();
-					}
+				if(rev.equals("bye1234567")){
 					break;
 				}
 			} 
