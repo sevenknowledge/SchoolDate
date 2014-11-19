@@ -5,15 +5,18 @@ import javax.swing.*;
 import java.awt.event.*;
 import java.awt.*;
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.net.UnknownHostException;
 
 public class ClientGUI extends JFrame implements ActionListener {
 
 	int i, j, checkstate;
 	String gt1, gt2, gt3, gt4, gt5, user, time;
-	Object[][] get = { { 1, 2, "3" }, { 4, '5', "6", 7 } };
+	Object[][] get = {{" "," "," "," "," "," "},{" "," "," "," "," "," "},{" "," "," "," "," "," "}};
+	Object[][] lesson = {{"            ","周一","周二","周三","周四","周五","周六","周日"},{"第一节","空闲","空闲","空闲","空闲","空闲","空闲","空闲"},{"第二节","空闲","空闲","空闲","空闲","空闲","空闲","空闲"},{"第三节","空闲","空闲","空闲","空闲","空闲","空闲","空闲"},{"第四节","空闲","空闲","空闲","空闲","空闲","空闲","空闲"}};
 	boolean check1 = true, check2 = false, nameused = false;
 	JPanel p0, p1, p2, p3, p4, p5, p6;
 	CardLayout card;
@@ -29,6 +32,7 @@ public class ClientGUI extends JFrame implements ActionListener {
 	JButton b1, b2, b3, b4, b5, b6, b7, b8, b9, b10, b11, b12, b13, b14, b15,
 			b16, b17, b18, b19, b20, b21;
 	JRadioButton rb1, rb2, rb3, rb4, rb5, rb6, rb7;
+	Socket socket;
 
 	public void clientGUI() {
 		// 定义窗体和全局的中间容器
@@ -279,6 +283,7 @@ public class ClientGUI extends JFrame implements ActionListener {
 		p4.add(b11);
 		b11.setBounds(750, 500, 100, 50);
 		b13 = new JButton("退出登录");
+		b13.addActionListener(this);
 		p4.add(b13);
 		b13.setBounds(800, 0, 100, 30);
 
@@ -433,19 +438,26 @@ public class ClientGUI extends JFrame implements ActionListener {
 		p6.add(b20);
 		b20.setBounds(500, 500, 100, 50);
 		b21 = new JButton("退出登录");
+		b21.addActionListener(this);
 		p6.add(b21);
 		b21.setBounds(800, 0, 100, 30);
 	}
 
 	public void actionPerformed(ActionEvent e) {
+		try {
+			socket = new Socket("127.0.0.1", 4700);
+		} catch (Exception e1) {
+			System.out.println("Error" + e);
+		} 
 		if (e.getSource() == b1) {
 			gt1 = t1.getText();
-			gt2 = t2.getPassword().toString();
+			char[] values = t2.getPassword();
+			gt2 = new String(values);
 			// 发送数据、匹配数据库,赋值check1和check2
 			try {
-				Socket socket = new Socket("127.0.0.1", 4700);
 				PrintWriter os = new PrintWriter(socket.getOutputStream());
 				os.println("1");
+				System.out.println("登陆指令发送");
 				os.flush();
 				os.println(gt1);
 				os.flush();
@@ -473,7 +485,7 @@ public class ClientGUI extends JFrame implements ActionListener {
 				}
 				System.out.println("check2赋值为"+check2);
 			} catch (Exception e1) {
-				System.out.println("Error" + e);
+				System.out.println("Error" + e1);
 			} 
 			if (check1 && check2) {
 				if (gt1.charAt(0) == '0') {
@@ -489,6 +501,22 @@ public class ClientGUI extends JFrame implements ActionListener {
 					card.next(p0);
 					user = gt1;
 					// 根据用户账号user检索数据库，查找其属性赋值给gt1到gt5
+					try {
+						PrintWriter os = new PrintWriter(socket.getOutputStream());
+						os.println("2");
+						os.flush();
+						os.println(user);
+						os.flush();
+						BufferedReader is = new BufferedReader(new InputStreamReader(
+								socket.getInputStream()));
+						gt1 = is.readLine();
+						gt2 = is.readLine();
+						gt3 = is.readLine();
+						gt4 = is.readLine();
+						gt5 = is.readLine();
+					} catch (Exception e1) {
+						System.out.println("Error:" + e1);
+					}
 					t10.setText(user);
 					t11.setText(gt1);
 					t12.setText(gt2);
@@ -506,6 +534,22 @@ public class ClientGUI extends JFrame implements ActionListener {
 					card.last(p0);
 					user = gt1;
 					// 根据用户账号user检索数据库，查找其属性赋值给gt1到gt5
+					try {
+						PrintWriter os = new PrintWriter(socket.getOutputStream());
+						os.println("2");
+						os.flush();
+						os.println(user);
+						os.flush();
+						BufferedReader is = new BufferedReader(new InputStreamReader(
+								socket.getInputStream()));
+						gt1 = is.readLine();
+						gt2 = is.readLine();
+						gt3 = is.readLine();
+						gt4 = is.readLine();
+						gt5 = is.readLine();
+					} catch (Exception e1) {
+						System.out.println("Error:" + e1);
+					}
 					t29.setText(user);
 					t30.setText(gt1);
 					t31.setText(gt2);
@@ -535,13 +579,51 @@ public class ClientGUI extends JFrame implements ActionListener {
 			card.previous(p0);
 		else if (e.getSource() == b4) {
 			gt1 = t3.getText();
-			gt2 = t4.getPassword().toString().trim();
-			gt3 = t5.getPassword().toString().trim();
-			if (gt1.charAt(0) == '1' && gt1.length() == 6 && gt2 == gt3
-					&& gt2 != "") {
+			char[] tem = t4.getPassword();
+			gt2 = new String(tem);
+			gt2 = gt2.trim();
+			tem = t5.getPassword();
+			gt3 = new String(tem);
+			gt3 = gt3.trim();
+			if (gt1.charAt(0) == '1' && gt1.length() == 6 && gt2.equals(gt3)
+					&& !gt2.equals(" ")) {
 				// 数据库中匹配老师账号，检测重复则nameused赋值true
+				try {
+					PrintWriter os = new PrintWriter(socket.getOutputStream());
+					os.println("3");
+					os.flush();
+					System.out.println("aaaaaa");
+					os.println(gt1);
+					os.flush();
+					BufferedReader is = new BufferedReader(new InputStreamReader(
+							socket.getInputStream()));
+					String rec;
+					rec = is.readLine();
+					System.out.println(rec);
+					System.out.println(gt1);
+					if(rec.equals(gt1)){
+						nameused = true;
+					}
+					else{
+						nameused = false;
+					}
+					System.out.println("nameused赋值为"+nameused);
+				} catch (Exception e1) {
+					System.out.println("Error" + e1);
+				} 
 				if (!nameused) {
 					// 数据库中建立老师账号，gt1是账号，gt2是密码
+					try {
+						PrintWriter os = new PrintWriter(socket.getOutputStream());
+						os.println("4");
+						os.flush();
+						os.println(gt1);
+						os.flush();
+						os.println(gt2);
+						os.flush();
+					} catch (Exception e1) {
+						System.out.println("Error" + e1);
+					} 
 					Warning w = new Warning();
 					w.warning(this, "注册成功！");
 					card.previous(p0);
@@ -553,11 +635,44 @@ public class ClientGUI extends JFrame implements ActionListener {
 					w.warning(this, "账号已存在");
 					System.out.println("账号已存在");
 				}
-			} else if (gt1.charAt(0) == '2' && gt1.length() == 11 && gt2 == gt3
-					&& gt2 != "") {
+			} else if (gt1.charAt(0) == '2' && gt1.length() == 11 && gt2.equals(gt3)
+					&& !gt2.equals(" ")) {
 				// 数据库中匹配学生账号
+				try {
+					PrintWriter os = new PrintWriter(socket.getOutputStream());
+					os.println("3");
+					os.flush();
+					os.println(gt1);
+					os.flush();
+					BufferedReader is = new BufferedReader(new InputStreamReader(
+							socket.getInputStream()));
+					String rec;
+					rec = is.readLine();
+					System.out.println(rec);
+					System.out.println(gt1);
+					if(rec.equals(gt1)){
+						nameused = true;
+					}
+					else{
+						nameused = false;
+					}
+					System.out.println("nameused赋值为"+nameused);
+				} catch (Exception e1) {
+					System.out.println("Error" + e1);
+				}
 				if (!nameused) {
 					// 数据库中建立学生账号
+					try {
+						PrintWriter os = new PrintWriter(socket.getOutputStream());
+						os.println("4");
+						os.flush();
+						os.println(gt1);
+						os.flush();
+						os.println(gt2);
+						os.flush();
+					} catch (Exception e1) {
+						System.out.println("Error" + e1);
+					} 
 					Warning w = new Warning();
 					w.warning(this, "注册成功！");
 					card.previous(p0);
@@ -568,7 +683,7 @@ public class ClientGUI extends JFrame implements ActionListener {
 					Warning w = new Warning();
 					w.warning(this, "账号已存在");
 				}
-			} else if (gt2 != gt3) {
+			} else if (!gt2.equals(gt3)) {
 				Warning w = new Warning();
 				w.warning(this, "密码确认错误");
 				System.out.println("密码确认错误");
@@ -577,15 +692,148 @@ public class ClientGUI extends JFrame implements ActionListener {
 				w.warning(this, "用户号非法");
 				System.out.println("用户号非法");
 			}
-			System.out.println(gt2);
-			System.out.println(gt3);
 		} else if (e.getSource() == b5) {
+			t9.setText(null);
+			for(int i = 0;i < 3;i++){
+				for(int j = 0;j < 6;j++){
+					get[i][j] = " ";
+				}
+			}
 			if (rb1.isSelected() && t6.getText() != null) {
 				checkstate = c1.getSelectedIndex();
 				gt1 = t6.getText();
 				// 从数据库中查询是否存在
+				if(checkstate == 0){
+					try {
+						PrintWriter os = new PrintWriter(socket.getOutputStream());
+						os.println("3");
+						os.flush();
+						os.println(gt1);
+						os.flush();
+						BufferedReader is = new BufferedReader(new InputStreamReader(
+								socket.getInputStream()));
+						String rec;
+						rec = is.readLine();
+						System.out.println(rec);
+						System.out.println(gt1);
+						if(rec.equals(gt1)){
+							check1 = true;
+						}
+						else{
+							check1 = false;
+						}
+						System.out.println("check1赋值为"+check1);
+					}catch (Exception e1) {
+						System.out.println("Error" + e1);
+					}
+				}
+				else if(checkstate == 1){
+					try {
+						PrintWriter os = new PrintWriter(socket.getOutputStream());
+						os.println("b1");
+						os.flush();
+						os.println(gt1);
+						os.flush();
+						BufferedReader is = new BufferedReader(new InputStreamReader(
+								socket.getInputStream()));
+						String rec;
+						rec = is.readLine();
+						System.out.println(rec);
+						System.out.println(gt1);
+						if(rec.equals(gt1)){
+							check1 = true;
+						}
+						else{
+							check1 = false;
+						}
+						System.out.println("check1赋值为"+check1);
+					}catch (Exception e1) {
+						System.out.println("Error" + e1);
+					}
+				}
+				else if(checkstate == 2){
+					try {
+						PrintWriter os = new PrintWriter(socket.getOutputStream());
+						os.println("b2");
+						os.flush();
+						os.println(gt1);
+						os.flush();
+						BufferedReader is = new BufferedReader(new InputStreamReader(
+								socket.getInputStream()));
+						String rec;
+						rec = is.readLine();
+						System.out.println(rec);
+						System.out.println(gt1);
+						if(rec.equals(gt1)){
+							check1 = true;
+						}
+						else{
+							check1 = false;
+						}
+						System.out.println("check1赋值为"+check1);
+					}catch (Exception e1) {
+						System.out.println("Error" + e1);
+					}
+				}
 				if (check1) {
 					// 从数据库中数据，输入get
+					try {
+						if(checkstate == 0){
+							PrintWriter os = new PrintWriter(socket.getOutputStream());
+							os.println("2");
+							os.flush();
+							os.println(gt1);
+							os.flush();
+							BufferedReader is = new BufferedReader(new InputStreamReader(
+									socket.getInputStream()));
+							get[0][0] = gt1;
+							get[0][1] = is.readLine();
+							get[0][2] = is.readLine();
+							get[0][3] = is.readLine();
+							get[0][4] = is.readLine();
+							get[0][5] = is.readLine();
+						}
+						if(checkstate == 1){
+							PrintWriter os = new PrintWriter(socket.getOutputStream());
+							os.println("a1");
+							os.flush();
+							os.println(gt1);
+							os.flush();
+							BufferedReader is = new BufferedReader(new InputStreamReader(
+									socket.getInputStream()));
+							int count = Integer.parseInt(is.readLine());
+							System.out.println(count);
+							for(int i = 0;i < count;i++){
+								get[i][0] = is.readLine();
+								get[i][1] = is.readLine();
+								get[i][2] = is.readLine();
+								get[i][3] = is.readLine();
+								get[i][4] = is.readLine();
+								get[i][5] = is.readLine();
+							}
+						}
+						if(checkstate == 2){
+							PrintWriter os = new PrintWriter(socket.getOutputStream());
+							os.println("a2");
+							os.flush();
+							os.println(gt1);
+							os.flush();
+							BufferedReader is = new BufferedReader(new InputStreamReader(
+									socket.getInputStream()));
+							int count = Integer.parseInt(is.readLine());
+							System.out.println(count);
+							for(int i = 0;i < count;i++){
+								get[i][0] = is.readLine();
+								get[i][1] = is.readLine();
+								get[i][2] = is.readLine();
+								get[i][3] = is.readLine();
+								get[i][4] = is.readLine();
+								get[i][5] = is.readLine();
+							}
+						}
+					}catch (Exception e1) {
+						System.out.println("Error" + e1);
+					}
 					t9.setText(null);
 					for (i = 0; i < get.length; i++) {
 						for (j = 0; j < get[i].length; j++) {
@@ -602,16 +850,78 @@ public class ClientGUI extends JFrame implements ActionListener {
 				gt1 = t7.getText();
 				gt2 = t8.getText();
 				// 从数据库中查询是否存在
-				if (check1 && check2) {
-					// 从数据库中数据，输入get
-					t9.setText(null);
-					for (i = 0; i < get.length; i++) {
-						for (j = 0; j < get[i].length; j++) {
-							t9.append(get[i][j].toString() + " ");
-						}
-						t9.append("\n");
+				try {
+					PrintWriter os = new PrintWriter(socket.getOutputStream());
+					os.println("3");
+					os.flush();
+					os.println(gt1);
+					os.flush();
+					BufferedReader is = new BufferedReader(new InputStreamReader(
+							socket.getInputStream()));
+					String rec;
+					rec = is.readLine();
+					System.out.println(rec);
+					System.out.println(gt1);
+					if(rec.equals(gt1)){
+						check1 = true;
 					}
-				} else if (!check1) {
+					else{
+						check1 = false;
+					}
+					System.out.println("check1赋值为"+check1);
+					os.println("b3");
+					os.flush();
+					os.println(gt1);
+					os.flush();
+					os.println(gt2);
+					os.flush();
+					rec = is.readLine();
+					if(rec.equals(gt2)){
+						check2 = true;
+					}
+					else{
+						check2 = false;
+					}
+					System.out.println("check2赋值为"+check2);
+				}catch (Exception e1) {
+					System.out.println("Error" + e1);
+				}
+				if (check1 && check2) {
+					for(int i = 1;i < 5;i++){
+						for(int j = 1;j < 8;j++){
+							lesson[i][j] = "空闲";
+						}
+					}
+					// 从数据库中数据，输入lesson
+					try {
+						PrintWriter os = new PrintWriter(socket.getOutputStream());
+						os.println("b4");
+						os.flush();
+						os.println(gt1);
+						os.flush();
+						os.println(gt2);
+						os.flush();
+						BufferedReader is = new BufferedReader(new InputStreamReader(
+							socket.getInputStream()));
+						int count = Integer.parseInt(is.readLine());
+						System.out.println(count);
+						for(int i = 0;i < count;i++){
+							int day = Integer.parseInt(is.readLine());
+							int less = Integer.parseInt(is.readLine());
+							lesson[less][day] = "有课"; 
+						}
+						t9.setText(null);
+						for (i = 0; i < lesson.length; i++) {
+							for (j = 0; j < lesson[i].length; j++) {
+								t9.append(lesson[i][j].toString() + " ");
+							}
+							t9.append("\n");
+						}
+					}catch(Exception e1) {
+						System.out.println("Error" + e1);
+					}
+				}
+					else if (!check1) {
 					Warning w = new Warning();
 					w.warning(this, "该用户不存在");
 				} else {
@@ -627,8 +937,40 @@ public class ClientGUI extends JFrame implements ActionListener {
 					&& t6.getText() != null) {
 				gt1 = t6.getText();
 				// 在数据库中按账号gt1查找，找到则置check1为真
+				try {
+					PrintWriter os = new PrintWriter(socket.getOutputStream());
+					os.println("3");
+					os.flush();
+					os.println(gt1);
+					os.flush();
+					BufferedReader is = new BufferedReader(new InputStreamReader(
+							socket.getInputStream()));
+					String rec;
+					rec = is.readLine();
+					System.out.println(rec);
+					System.out.println(gt1);
+					if(rec.equals(gt1)){
+						check1 = true;
+					}
+					else{
+						check1 = false;
+					}
+					System.out.println("check1赋值为"+check1);
+				} catch (Exception e1) {
+					System.out.println("Error" + e1);
+				}
 				if (check1) {
 					// 在数据库中删除账号为gt1的实体
+					PrintWriter os;
+					try {
+						os = new PrintWriter(socket.getOutputStream());
+						os.println("c");
+						os.flush();
+						os.println(gt1);
+						os.flush();
+					} catch (IOException e1) {
+						System.out.println("Error" + e1);
+					}
 				} else {
 					Warning w = new Warning();
 					w.warning(this, "该用户不存在");
