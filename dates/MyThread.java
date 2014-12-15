@@ -38,11 +38,17 @@ public class MyThread extends Thread
 				else if(rev.equals("4")){
 					User.regist(socket, conn,is);
 				}
+				else if(rev.equals("5")){
+					User.reset(socket, conn,is);
+				}
 				else if(rev.equals("a1")){
 					Time.t_find(socket, conn,is);
 				}
 				else if(rev.equals("a2")){
 					Time.s_find(socket, conn,is);
+				}
+				else if(rev.equals("a3")){
+					Time.d_find(socket, conn,is);
 				}
 				else if(rev.equals("b1")){
 					Time.t_select(socket,conn,is);
@@ -51,7 +57,7 @@ public class MyThread extends Thread
 					Time.s_select(socket,conn,is);
 				}
 				else if(rev.equals("b3")){
-					Time.w_select(socket,conn,is);
+					Time.d_sure(socket,conn,is);
 				}
 				else if(rev.equals("b4")){
 					Time.l_select(socket,conn,is);
@@ -60,8 +66,16 @@ public class MyThread extends Thread
 					User.delete(socket,conn,is);
 				}
 				else if(rev.equals("d")){
-					os.println("×¢Ïú³É¹¦");
-					os.flush();
+					Time.d_select(socket, conn, is);
+				}
+				else if(rev.equals("da")){
+					User.date(socket, conn, is);
+				}
+				else if(rev.equals("tc")){
+					Time.d_tcon(socket, conn, is);
+				}
+				else if(rev.equals("td")){
+					Time.d_td(socket, conn, is);
 				}
 				else break;
 			}

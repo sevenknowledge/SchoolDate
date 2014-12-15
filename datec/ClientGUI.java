@@ -241,6 +241,7 @@ public class ClientGUI extends JFrame implements ActionListener {
 		p4.add(t22);
 		t22.setBounds(550, 200, 100, 50);
 		b12 = new JButton("查询");
+		b12.addActionListener(this);
 		p4.add(b12);
 		b12.setBounds(750, 200, 100, 50);
 		b8 = new JButton("上");
@@ -320,9 +321,11 @@ public class ClientGUI extends JFrame implements ActionListener {
 		p5.add(t28);
 		t28.setBounds(350, 425, 250, 50);
 		b14 = new JButton("上一步");
+		b14.addActionListener(this);
 		p5.add(b14);
 		b14.setBounds(300, 525, 100, 30);
 		b15 = new JButton("保存");
+		b15.addActionListener(this);
 		p5.add(b15);
 		b15.setBounds(500, 525, 100, 30);
 
@@ -371,6 +374,7 @@ public class ClientGUI extends JFrame implements ActionListener {
 		p6.add(t34);
 		t34.setBounds(700, 110, 150, 50);
 		b16 = new JButton("更改");
+		b16.addActionListener(this);
 		p6.add(b16);
 		b16.setBounds(750, 165, 100, 25);
 		t35 = new JTextArea();
@@ -410,14 +414,17 @@ public class ClientGUI extends JFrame implements ActionListener {
 		p6.add(t38);
 		t38.setBounds(575, 200, 100, 50);
 		b17 = new JButton("查询");
+		b17.addActionListener(this);
 		p6.add(b17);
 		b17.setBounds(775, 200, 75, 50);
 		b18 = new JButton("上");
+		b18.addActionListener(this);
 		p6.add(b18);
 		b18.setBounds(50, 500, 50, 50);
 		b19 = new JButton("下");
 		p6.add(b19);
 		b19.setBounds(100, 500, 50, 50);
+		b19.addActionListener(this);
 		l36 = new JLabel("一周    周");
 		p6.add(l36);
 		l36.setBounds(150, 500, 100, 50);
@@ -435,6 +442,7 @@ public class ClientGUI extends JFrame implements ActionListener {
 		p6.add(t41);
 		t41.setBounds(450, 500, 50, 50);
 		b20 = new JButton("预约");
+		b20.addActionListener(this);
 		p6.add(b20);
 		b20.setBounds(500, 500, 100, 50);
 		b21 = new JButton("退出登录");
@@ -514,6 +522,7 @@ public class ClientGUI extends JFrame implements ActionListener {
 						gt3 = is.readLine();
 						gt4 = is.readLine();
 						gt5 = is.readLine();
+						time = "11";
 					} catch (Exception e1) {
 						System.out.println("Error:" + e1);
 					}
@@ -547,6 +556,7 @@ public class ClientGUI extends JFrame implements ActionListener {
 						gt3 = is.readLine();
 						gt4 = is.readLine();
 						gt5 = is.readLine();
+						time = "11";
 					} catch (Exception e1) {
 						System.out.println("Error:" + e1);
 					}
@@ -869,14 +879,7 @@ public class ClientGUI extends JFrame implements ActionListener {
 						check1 = false;
 					}
 					System.out.println("check1赋值为"+check1);
-					os.println("b3");
-					os.flush();
-					os.println(gt1);
-					os.flush();
-					os.println(gt2);
-					os.flush();
-					rec = is.readLine();
-					if(rec.equals(gt2)){
+					if(Integer.parseInt(gt2) <= 20 && Integer.parseInt(gt2) >= 1){
 						check2 = true;
 					}
 					else{
@@ -887,11 +890,7 @@ public class ClientGUI extends JFrame implements ActionListener {
 					System.out.println("Error" + e1);
 				}
 				if (check1 && check2) {
-					for(int i = 1;i < 5;i++){
-						for(int j = 1;j < 8;j++){
-							lesson[i][j] = "空闲";
-						}
-					}
+					Lesson.init(lesson);
 					// 从数据库中数据，输入lesson
 					try {
 						PrintWriter os = new PrintWriter(socket.getOutputStream());
@@ -905,18 +904,9 @@ public class ClientGUI extends JFrame implements ActionListener {
 							socket.getInputStream()));
 						int count = Integer.parseInt(is.readLine());
 						System.out.println(count);
-						for(int i = 0;i < count;i++){
-							int day = Integer.parseInt(is.readLine());
-							int less = Integer.parseInt(is.readLine());
-							lesson[less][day] = "有课"; 
-						}
+						Lesson.put(lesson, is, count);
 						t9.setText(null);
-						for (i = 0; i < lesson.length; i++) {
-							for (j = 0; j < lesson[i].length; j++) {
-								t9.append(lesson[i][j].toString() + " ");
-							}
-							t9.append("\n");
-						}
+						Lesson.show(lesson, t9);
 					}catch(Exception e1) {
 						System.out.println("Error" + e1);
 					}
@@ -994,20 +984,53 @@ public class ClientGUI extends JFrame implements ActionListener {
 				if (i == 0)
 					i = 20;
 				gt1 = "" + i;
+				t17.setText(gt1);
 				gt2 = t18.getText();
 				gt3 = t19.getText();
 				// 从数据库中查询第gt1周的课表存入get中
-				t23.setText(null);
-				for (i = 0; i < get.length; i++) {
-					for (j = 0; j < get[i].length; j++) {
-						t23.append(get[i][j].toString() + " ");
-					}
-					t23.append("\n");
+				Lesson.init(lesson);
+				// 从数据库中数据，输入lesson
+				try {
+					PrintWriter os = new PrintWriter(socket.getOutputStream());
+					os.println("b4");
+					os.flush();
+					os.println(user);
+					os.flush();
+					os.println(gt1);
+					os.flush();
+					BufferedReader is = new BufferedReader(new InputStreamReader(
+						socket.getInputStream()));
+					int count = Integer.parseInt(is.readLine());
+					System.out.println(count);
+					Lesson.put(lesson, is, count);
+				}catch(Exception e1) {
+					System.out.println("Error" + e1);
 				}
+				t23.setText(null);
+				Lesson.show(lesson,t23);
 				if (Integer.parseInt(gt2) >= 1 && Integer.parseInt(gt2) <= 7
 						&& Integer.parseInt(gt3) >= 1
-						&& Integer.parseInt(gt3) <= 8) {
-					// 在数据库中user的第gt1周周gt2第gt3课时的预约状态置无并赋值gt4、gt5
+						&& Integer.parseInt(gt3) <= 4) {
+					//将gt4和gt5置为gt1周第gt2天gt3课时的状态和预约人
+					try {
+						PrintWriter os = new PrintWriter(socket.getOutputStream());
+						os.println("d");
+						os.flush();
+						os.println(user);
+						os.flush();
+						os.println(gt1);
+						os.flush();
+						os.println(gt2);
+						os.flush();
+						os.println(gt3);
+						os.flush();
+						BufferedReader is = new BufferedReader(new InputStreamReader(
+							socket.getInputStream()));
+						gt4 = is.readLine();
+						gt5 = is.readLine();
+					}catch(Exception e1) {
+						System.out.println("Error" + e1);
+					}
 					t20.setText(gt4);
 					t21.setText(gt5);
 				} else {
@@ -1023,20 +1046,52 @@ public class ClientGUI extends JFrame implements ActionListener {
 				gt1 = t17.getText();
 				i = Integer.parseInt(gt1) % 20 + 1;
 				gt1 = "" + i;
+				t17.setText(gt1);
 				gt2 = t18.getText();
 				gt3 = t19.getText();
-				// 从数据库中查询第gt1周的课表存入get中
-				t23.setText(null);
-				for (i = 0; i < get.length; i++) {
-					for (j = 0; j < get[i].length; j++) {
-						t23.append(get[i][j].toString() + " ");
-					}
-					t23.append("\n");
+				Lesson.init(lesson);
+				// 从数据库中数据，输入lesson
+				try {
+					PrintWriter os = new PrintWriter(socket.getOutputStream());
+					os.println("b4");
+					os.flush();
+					os.println(user);
+					os.flush();
+					os.println(gt1);
+					os.flush();
+					BufferedReader is = new BufferedReader(new InputStreamReader(
+						socket.getInputStream()));
+					int count = Integer.parseInt(is.readLine());
+					System.out.println(count);
+					Lesson.put(lesson, is, count);
+				}catch(Exception e1) {
+					System.out.println("Error" + e1);
 				}
+				t23.setText(null);
+				Lesson.show(lesson, t23);
 				if (Integer.parseInt(gt2) >= 1 && Integer.parseInt(gt2) <= 7
 						&& Integer.parseInt(gt3) >= 1
-						&& Integer.parseInt(gt3) <= 8) {
-					// 在数据库中user的第gt1周周gt2第gt3课时的预约状态置无并赋值gt4、gt5
+						&& Integer.parseInt(gt3) <= 4) {
+					//将gt4和gt5置为gt1周第gt2天gt3课时的状态和预约人
+					try {
+						PrintWriter os = new PrintWriter(socket.getOutputStream());
+						os.println("d");
+						os.flush();
+						os.println(user);
+						os.flush();
+						os.println(gt1);
+						os.flush();
+						os.println(gt2);
+						os.flush();
+						os.println(gt3);
+						os.flush();
+						BufferedReader is = new BufferedReader(new InputStreamReader(
+							socket.getInputStream()));
+						gt4 = is.readLine();
+						gt5 = is.readLine();
+					}catch(Exception e1) {
+						System.out.println("Error" + e1);
+					}
 					t20.setText(gt4);
 					t21.setText(gt5);
 				} else {
@@ -1053,9 +1108,37 @@ public class ClientGUI extends JFrame implements ActionListener {
 			gt2 = t18.getText();
 			gt3 = t19.getText();
 			if (Integer.parseInt(gt2) >= 1 && Integer.parseInt(gt2) <= 7
-					&& Integer.parseInt(gt3) >= 1 && Integer.parseInt(gt3) <= 8) {
+					&& Integer.parseInt(gt3) >= 1 && Integer.parseInt(gt3) <= 4) {
 				// 在数据库中修改user的第gt1周周gt2第gt3课时的闲/忙状态并赋值gt4
+				try {
+					PrintWriter os = new PrintWriter(socket.getOutputStream());
+					os.println("tc");
+					os.flush();
+					os.println(user);
+					os.flush();
+					os.println(gt1);
+					os.flush();
+					os.println(gt2);
+					os.flush();
+					os.println(gt3);
+					os.flush();
+					BufferedReader is = new BufferedReader(new InputStreamReader(
+						socket.getInputStream()));
+					gt4 = is.readLine();
+					gt5 = is.readLine();
+				}catch(Exception e1) {
+					System.out.println("Error" + e1);
+				}
 				t20.setText(gt4);
+				t21.setText(gt5);
+				if(lesson[Integer.parseInt(gt3)][Integer.parseInt(gt2)] == "繁忙"){
+					lesson[Integer.parseInt(gt3)][Integer.parseInt(gt2)] = "空闲";
+				}
+				else{
+					lesson[Integer.parseInt(gt3)][Integer.parseInt(gt2)] = "繁忙";
+				}
+				t23.setText(null);
+				Lesson.show(lesson, t23);
 			} else {
 				Warning w = new Warning();
 				w.warning(this, "修改失败");
@@ -1065,9 +1148,36 @@ public class ClientGUI extends JFrame implements ActionListener {
 			gt2 = t18.getText();
 			gt3 = t19.getText();
 			if (Integer.parseInt(gt2) >= 1 && Integer.parseInt(gt2) <= 7
-					&& Integer.parseInt(gt3) >= 1 && Integer.parseInt(gt3) <= 8) {
+					&& Integer.parseInt(gt3) >= 1 && Integer.parseInt(gt3) <= 4) {
 				// 在数据库中user的第gt1周周gt2第gt3课时的预约状态置无并赋值gt4
-				t21.setText(gt4);
+				try {
+					PrintWriter os = new PrintWriter(socket.getOutputStream());
+					os.println("td");
+					os.flush();
+					os.println(user);
+					os.flush();
+					os.println(gt1);
+					os.flush();
+					os.println(gt2);
+					os.flush();
+					os.println(gt3);
+					os.flush();
+					BufferedReader is = new BufferedReader(new InputStreamReader(
+						socket.getInputStream()));
+					String rev = is.readLine();
+					if(rev.equals("1")){
+						t20.setText("空闲");
+						t21.setText("无");
+						lesson[Integer.parseInt(gt3)][Integer.parseInt(gt2)] = "空闲";
+						t23.setText(null);
+						Lesson.show(lesson, t23);
+					}else if(rev.equals("2")){
+						Warning w = new Warning();
+						w.warning(this, "无此预约，修改失败");
+					}
+				}catch(Exception e1) {
+					System.out.println("Error" + e1);
+				}
 			} else {
 				Warning w = new Warning();
 				w.warning(this, "修改失败");
@@ -1077,18 +1187,49 @@ public class ClientGUI extends JFrame implements ActionListener {
 				gt1 = t17.getText();
 				gt2 = t18.getText();
 				gt3 = t19.getText();
-				// 从数据库中查询第gt1周的课表存入get中
-				t23.setText(null);
-				for (i = 0; i < get.length; i++) {
-					for (j = 0; j < get[i].length; j++) {
-						t23.append(get[i][j].toString() + " ");
-					}
-					t23.append("\n");
+				Lesson.init(lesson);
+				// 从数据库中数据，输入lesson
+				try {
+					PrintWriter os = new PrintWriter(socket.getOutputStream());
+					os.println("b4");
+					os.flush();
+					os.println(user);
+					os.flush();
+					os.println(gt1);
+					os.flush();
+					BufferedReader is = new BufferedReader(new InputStreamReader(
+						socket.getInputStream()));
+					int count = Integer.parseInt(is.readLine());
+					System.out.println(count);
+					Lesson.put(lesson, is, count);
+				}catch(Exception e1) {
+					System.out.println("Error" + e1);
 				}
+				t23.setText(null);
+				Lesson.show(lesson, t23);
 				if (Integer.parseInt(gt2) >= 1 && Integer.parseInt(gt2) <= 7
 						&& Integer.parseInt(gt3) >= 1
-						&& Integer.parseInt(gt3) <= 8) {
-					// 在数据库中user的第gt1周周gt2第gt3课时的预约状态置无并赋值gt4、gt5
+						&& Integer.parseInt(gt3) <= 4) {
+					//将gt4和gt5置为gt1周第gt2天gt3课时的状态和预约人
+					try {
+						PrintWriter os = new PrintWriter(socket.getOutputStream());
+						os.println("d");
+						os.flush();
+						os.println(user);
+						os.flush();
+						os.println(gt1);
+						os.flush();
+						os.println(gt2);
+						os.flush();
+						os.println(gt3);
+						os.flush();
+						BufferedReader is = new BufferedReader(new InputStreamReader(
+							socket.getInputStream()));
+						gt4 = is.readLine();
+						gt5 = is.readLine();
+					}catch(Exception e1) {
+						System.out.println("Error" + e1);
+					}
 					t20.setText(gt4);
 					t21.setText(gt5);
 				} else {
@@ -1098,7 +1239,49 @@ public class ClientGUI extends JFrame implements ActionListener {
 			} else if (rb4.isSelected()) {
 				gt1 = t22.getText();
 				// 在数据库中检索姓名是gt1的学生，检索到则check1为true，并赋值get
+				try {
+					PrintWriter os = new PrintWriter(socket.getOutputStream());
+					os.println("b2");
+					os.flush();
+					os.println(gt1);
+					os.flush();
+					BufferedReader is = new BufferedReader(new InputStreamReader(
+							socket.getInputStream()));
+					String rec;
+					rec = is.readLine();
+					System.out.println(rec);
+					System.out.println(gt1);
+					if(rec.equals(gt1)){
+						check1 = true;
+					}
+					else{
+						check1 = false;
+					}
+				}catch(Exception e1) {
+					System.out.println("Error" + e1);
+				}
 				if (check1) {
+					try {
+						PrintWriter os = new PrintWriter(socket.getOutputStream());
+						os.println("a2");
+						os.flush();
+						os.println(gt1);
+						os.flush();
+						BufferedReader is = new BufferedReader(new InputStreamReader(
+							socket.getInputStream()));
+						int count = Integer.parseInt(is.readLine());
+						System.out.println(count);
+						for(int i = 0;i < count;i++){
+							get[i][0] = is.readLine();
+							get[i][1] = is.readLine();
+							get[i][2] = is.readLine();
+							get[i][3] = is.readLine();
+							get[i][4] = is.readLine();
+							get[i][5] = is.readLine();
+						}
+					}catch(Exception e1) {
+						System.out.println("Error" + e1);
+					}
 					t23.setText(null);
 					for (i = 0; i < get.length; i++) {
 						for (j = 0; j < get[i].length; j++) {
@@ -1128,6 +1311,25 @@ public class ClientGUI extends JFrame implements ActionListener {
 			gt4 = t27.getText();
 			gt5 = t28.getText();
 			// 在数据库中保存信息
+			try {
+				PrintWriter os = new PrintWriter(socket.getOutputStream());
+				os.println("5");
+				os.flush();
+				os.println(user);
+				os.flush();
+				os.println(gt1);
+				os.flush();
+				os.println(gt2);
+				os.flush();
+				os.println(gt3);
+				os.flush();
+				os.println(gt4);
+				os.flush();
+				os.println(gt5);
+				os.flush();
+			}catch(Exception e1) {
+				System.out.println("Error" + e1);
+			}
 			Warning w = new Warning();
 			w.warning(this, "保存成功！");
 			if (checkstate == 1)
@@ -1149,19 +1351,72 @@ public class ClientGUI extends JFrame implements ActionListener {
 				gt3 = t39.getText();
 				gt4 = t40.getText();
 				// 从数据库中查询gt2号老师第gt1周的课表,若成功则check1变true，存入get中
+				try {
+					PrintWriter os = new PrintWriter(socket.getOutputStream());
+					os.println("3");
+					os.flush();
+					os.println(gt2);
+					os.flush();
+					BufferedReader is = new BufferedReader(new InputStreamReader(
+							socket.getInputStream()));
+					String rec;
+					rec = is.readLine();
+					if(rec.equals(gt2)){
+						if(Integer.parseInt(gt1) <= 20 && Integer.parseInt(gt1) >= 1){
+							check1 = true;
+						}
+					}
+					else{
+						check1 = false;
+					}
+				}catch (Exception e1) {
+					System.out.println("Error" + e1);
+				}
 				if (check1) {
 					t35.setText(null);
-					for (i = 0; i < get.length; i++) {
-						for (j = 0; j < get[i].length; j++) {
-							t35.append(get[i][j].toString() + " ");
-						}
-						t35.append("\n");
+					Lesson.init(lesson);
+					try {
+						PrintWriter os = new PrintWriter(socket.getOutputStream());
+						os.println("b4");
+						os.flush();
+						os.println(gt2);
+						os.flush();
+						os.println(gt1);
+						os.flush();
+						BufferedReader is = new BufferedReader(new InputStreamReader(
+							socket.getInputStream()));
+						int count = Integer.parseInt(is.readLine());
+						System.out.println(count);
+						Lesson.put(lesson, is, count);
+						t9.setText(null);
+						Lesson.show(lesson, t35);
+					}catch(Exception e1) {
+						System.out.println("Error" + e1);
 					}
 					if (Integer.parseInt(gt3) >= 1
 							&& Integer.parseInt(gt3) <= 7
 							&& Integer.parseInt(gt4) >= 1
-							&& Integer.parseInt(gt4) <= 8) {
-						// 在数据库中gt2的第gt1周周gt3第gt4课时的预约状态置无并赋值gt5
+							&& Integer.parseInt(gt4) <= 4) {
+						// 在数据库查询gt2的第gt1周周gt3第gt4课时的预约状态并赋值gt5
+						try {
+							PrintWriter os = new PrintWriter(socket.getOutputStream());
+							os.println("d");
+							os.flush();
+							os.println(gt2);
+							os.flush();
+							os.println(gt1);
+							os.flush();
+							os.println(gt3);
+							os.flush();
+							os.println(gt4);
+							os.flush();
+							BufferedReader is = new BufferedReader(new InputStreamReader(
+								socket.getInputStream()));
+							gt5 = is.readLine();
+							String tem = is.readLine();
+						}catch(Exception e1) {
+							System.out.println("Error" + e1);
+						}
 						t41.setText(gt5);
 					} else {
 						Warning w = new Warning();
@@ -1173,27 +1428,67 @@ public class ClientGUI extends JFrame implements ActionListener {
 				}
 			} else if (rb6.isSelected()) {
 				gt1 = t38.getText();
-				// 在数据库中检索姓名是gt1的学生，检索到则check1为true，并赋值get
-				if (check1) {
-					t35.setText(null);
-					for (i = 0; i < get.length; i++) {
-						for (j = 0; j < get[i].length; j++) {
-							t35.append(get[i][j].toString() + " ");
+				// 在数据库中检索姓名是gt1的老师，检索到则check1为true，并赋值get
+				try {
+					PrintWriter os = new PrintWriter(socket.getOutputStream());
+					os.println("a1");
+					os.flush();
+					os.println(gt1);
+					os.flush();
+					BufferedReader is = new BufferedReader(new InputStreamReader(
+						socket.getInputStream()));
+					int count = Integer.parseInt(is.readLine());
+					System.out.println(count);
+					if(count > 0){
+						for(int i = 0;i < count;i++){
+								get[i][0] = is.readLine();
+								get[i][1] = is.readLine();
+								get[i][2] = is.readLine();
+								get[i][3] = is.readLine();
+								get[i][4] = is.readLine();
+								get[i][5] = is.readLine();
 						}
-						t35.append("\n");
+						t35.setText(null);
+						for (i = 0; i < get.length; i++) {
+							for (j = 0; j < get[i].length; j++) {
+								t35.append(get[i][j].toString() + " ");
+							}
+							t35.append("\n");
+						}
 					}
-				} else {
-					Warning w = new Warning();
-					w.warning(this, "该用户不存在");
+					else {
+						Warning w = new Warning();
+						w.warning(this, "该用户不存在");
+					}
+				}catch(Exception e1) {
+					System.out.println("Error" + e1);
 				}
 			} else if (rb7.isSelected()) {
 				// 在数据库中检索预约人为user的老师、时间，存入get
 				t35.setText(null);
-				for (i = 0; i < get.length; i++) {
-					for (j = 0; j < get[i].length; j++) {
-						t35.append(get[i][j].toString() + " ");
+				try {
+					PrintWriter os = new PrintWriter(socket.getOutputStream());
+					os.println("a3");
+					os.flush();
+					os.println(user);
+					os.flush();
+					BufferedReader is = new BufferedReader(new InputStreamReader(
+						socket.getInputStream()));
+					int count = Integer.parseInt(is.readLine());
+					System.out.println(count);
+					for(int i = 0;i < count;i++){
+						String rev = is.readLine();
+						t35.append("第" + rev + "周"+" ");
+						rev = is.readLine();
+						t35.append("第" + rev + "天"+" ");
+						rev = is.readLine();
+						t35.append("第" + rev + "堂"+" ");
+						rev = is.readLine();
+						t35.append("老师号：" + rev);
+						t35.append("\n");
 					}
-					t35.append("\n");
+				}catch(Exception e1) {
+					System.out.println("Error" + e1);
 				}
 			}
 		} else if (e.getSource() == b18) {
@@ -1207,19 +1502,73 @@ public class ClientGUI extends JFrame implements ActionListener {
 				gt3 = t39.getText();
 				gt4 = t40.getText();
 				// 从数据库中查询gt2号老师第gt1周的课表,若成功则check1变true，存入get中
+				try {
+					PrintWriter os = new PrintWriter(socket.getOutputStream());
+					os.println("3");
+					os.flush();
+					os.println(gt2);
+					os.flush();
+					BufferedReader is = new BufferedReader(new InputStreamReader(
+							socket.getInputStream()));
+					String rec;
+					rec = is.readLine();
+					if(rec.equals(gt2)){
+						if(Integer.parseInt(gt1) <= 20 && Integer.parseInt(gt1) >= 1){
+							check1 = true;
+						}
+					}
+					else{
+						check1 = false;
+					}
+				}catch (Exception e1) {
+					System.out.println("Error" + e1);
+				}
 				if (check1) {
 					t35.setText(null);
-					for (i = 0; i < get.length; i++) {
-						for (j = 0; j < get[i].length; j++) {
-							t35.append(get[i][j].toString() + " ");
-						}
-						t35.append("\n");
+					Lesson.init(lesson);
+					try {
+						PrintWriter os = new PrintWriter(socket.getOutputStream());
+						os.println("b4");
+						os.flush();
+						os.println(gt2);
+						os.flush();
+						os.println(gt1);
+						os.flush();
+						BufferedReader is = new BufferedReader(new InputStreamReader(
+							socket.getInputStream()));
+						int count = Integer.parseInt(is.readLine());
+						System.out.println(count);
+						Lesson.put(lesson, is, count);
+						t9.setText(null);
+						t36.setText(gt1);
+						Lesson.show(lesson, t35);
+					}catch(Exception e1) {
+						System.out.println("Error" + e1);
 					}
 					if (Integer.parseInt(gt3) >= 1
 							&& Integer.parseInt(gt3) <= 7
 							&& Integer.parseInt(gt4) >= 1
-							&& Integer.parseInt(gt4) <= 8) {
+							&& Integer.parseInt(gt4) <= 4) {
 						// 在数据库中gt2的第gt1周周gt3第gt4课时的预约状态置无并赋值gt5
+						try {
+							PrintWriter os = new PrintWriter(socket.getOutputStream());
+							os.println("d");
+							os.flush();
+							os.println(gt2);
+							os.flush();
+							os.println(gt1);
+							os.flush();
+							os.println(gt3);
+							os.flush();
+							os.println(gt4);
+							os.flush();
+							BufferedReader is = new BufferedReader(new InputStreamReader(
+								socket.getInputStream()));
+							gt5 = is.readLine();
+							String tem = is.readLine();
+						}catch(Exception e1) {
+							System.out.println("Error" + e1);
+						}
 						t41.setText(gt5);
 					} else {
 						Warning w = new Warning();
@@ -1242,19 +1591,72 @@ public class ClientGUI extends JFrame implements ActionListener {
 				gt3 = t39.getText();
 				gt4 = t40.getText();
 				// 从数据库中查询gt2号老师第gt1周的课表,若成功则check1变true，存入get中
+				try {
+					PrintWriter os = new PrintWriter(socket.getOutputStream());
+					os.println("3");
+					os.flush();
+					os.println(gt2);
+					os.flush();
+					BufferedReader is = new BufferedReader(new InputStreamReader(
+							socket.getInputStream()));
+					String rec;
+					rec = is.readLine();
+					if(rec.equals(gt2)){
+						if(Integer.parseInt(gt1) <= 20 && Integer.parseInt(gt1) >= 1){
+							check1 = true;
+						}
+					}
+					else{
+						check1 = false;
+					}
+				}catch (Exception e1) {
+					System.out.println("Error" + e1);
+				}
 				if (check1) {
 					t35.setText(null);
-					for (i = 0; i < get.length; i++) {
-						for (j = 0; j < get[i].length; j++) {
-							t35.append(get[i][j].toString() + " ");
-						}
-						t35.append("\n");
+					Lesson.init(lesson);
+					try {
+						PrintWriter os = new PrintWriter(socket.getOutputStream());
+						os.println("b4");
+						os.flush();
+						os.println(gt2);
+						os.flush();
+						os.println(gt1);
+						os.flush();
+						BufferedReader is = new BufferedReader(new InputStreamReader(
+							socket.getInputStream()));
+						int count = Integer.parseInt(is.readLine());
+						System.out.println(count);
+						Lesson.put(lesson, is, count);
+						t36.setText(gt1);
+						Lesson.show(lesson, t35);
+					}catch(Exception e1) {
+						System.out.println("Error" + e1);
 					}
 					if (Integer.parseInt(gt3) >= 1
 							&& Integer.parseInt(gt3) <= 7
 							&& Integer.parseInt(gt4) >= 1
-							&& Integer.parseInt(gt4) <= 8) {
+							&& Integer.parseInt(gt4) <= 4) {
 						// 在数据库中gt2的第gt1周周gt3第gt4课时的预约状态置无并赋值gt5
+						try {
+							PrintWriter os = new PrintWriter(socket.getOutputStream());
+							os.println("d");
+							os.flush();
+							os.println(gt2);
+							os.flush();
+							os.println(gt1);
+							os.flush();
+							os.println(gt3);
+							os.flush();
+							os.println(gt4);
+							os.flush();
+							BufferedReader is = new BufferedReader(new InputStreamReader(
+								socket.getInputStream()));
+							gt5 = is.readLine();
+							String tem = is.readLine();
+						}catch(Exception e1) {
+							System.out.println("Error" + e1);
+						}
 						t41.setText(gt5);
 					} else {
 						Warning w = new Warning();
@@ -1273,9 +1675,60 @@ public class ClientGUI extends JFrame implements ActionListener {
 			gt2 = t37.getText();
 			gt3 = t39.getText();
 			gt4 = t40.getText();
+			gt5 = t30.getText();
 			// 在数据库中gt2的第gt1周周gt3第gt4课时的预约状态
+			try {
+				PrintWriter os = new PrintWriter(socket.getOutputStream());
+				os.println("b3");
+				os.flush();
+				os.println(gt2);
+				os.flush();
+				os.println(gt1);
+				os.flush();
+				os.println(gt3);
+				os.flush();
+				os.println(gt4);
+				os.flush();
+				BufferedReader is = new BufferedReader(new InputStreamReader(
+						socket.getInputStream()));
+				String rec;
+				rec = is.readLine();
+				System.out.println(rec);
+				System.out.println(gt2);
+				if(rec.equals(gt2)){
+					check1 = false;
+				}
+				else{
+					check1 = true;
+				}
+			}catch(Exception e1) {
+				System.out.println("Error" + e1);
+			}
 			// 若为闲/未预约，返回check1为true，修改为已预约状态并赋值gt5
 			if (check1) {
+				try {
+					PrintWriter os = new PrintWriter(socket.getOutputStream());
+					os.println("da");
+					os.flush();
+					os.println(gt2);
+					os.flush();
+					os.println(gt1);
+					os.flush();
+					os.println(gt3);
+					os.flush();
+					os.println(gt4);
+					os.flush();
+					os.println(gt5);
+					os.flush();
+					os.println(user);
+					os.flush();
+				}catch(Exception e1) {
+					System.out.println("Error" + e1);
+				}
+				lesson[Integer.parseInt(gt4)][Integer.parseInt(gt3)] = "有约";
+				t35.setText(null);
+				Lesson.show(lesson, t35);
+				gt5 = "有约";
 				Warning w = new Warning();
 				w.warning(this, "预约成功");
 				t41.setText(gt5);

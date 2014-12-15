@@ -8,13 +8,52 @@ import java.net.Socket;
 import java.sql.*;
 
 public class User {
-
+	public static void date(Socket socket,Connection conn,BufferedReader is)
+	{
+		System.out.println("学生预约模块");
+		try {
+			String rec1,rec2,rec3,rec4,rec5,rec6;
+			rec1 = is.readLine();
+			rec2 = is.readLine();
+			rec3 = is.readLine();
+			rec4 = is.readLine();
+			rec5 = is.readLine();
+			rec6 = is.readLine();
+		    //执行SQL语句
+		    Statement stmt = conn.createStatement();//创建语句对象，用以执行sql语言
+		    stmt.executeUpdate("insert lesson_table() values (" + rec1 + "," + rec2 + "," + rec3+ "," + rec4+ ",'" + rec5+ "'," + rec6 + ")");
+		} catch (Exception e) {
+			System.out.println("Error:" + e);
+		}	
+	}
+	public static void reset(Socket socket,Connection conn,BufferedReader is)
+	{
+		System.out.println("用户更改模块");
+		try {
+			String rec1,rec2,rec3,rec4,rec5,rec6;
+			rec1 = is.readLine();
+			rec2 = is.readLine();
+			rec3 = is.readLine();
+			rec4 = is.readLine();
+			rec5 = is.readLine();
+			rec6 = is.readLine();
+		    //执行SQL语句
+		    Statement stmt = conn.createStatement();//创建语句对象，用以执行sql语言
+		    if(rec1.charAt(0) == '1'){
+		    	stmt.executeUpdate("update teacher_table set name ='" + rec2 + "',course='" + rec3 + "',address='" + rec4 + "',phone='" + rec5 + "',email='" + rec6 + "' where logname=" + rec1 );
+		    }
+		    if(rec1.charAt(0) == '2'){
+		    	stmt.executeUpdate("update student_table set name ='" + rec2 + "',academy='" + rec3 + "',address='" + rec4 + "',phone='" + rec5 + "',email='" + rec6 + "' where logname=" + rec1);
+		    }
+		} catch (Exception e) {
+			System.out.println("Error:" + e);
+		}	
+	}
 	public static void namejudge(Socket socket,Connection conn,BufferedReader is)
 	{
 		System.out.println("用户查询存在模块");
 		try {
 			PrintWriter os = new PrintWriter(socket.getOutputStream());
-			os.flush();
 			String rec;
 			rec = is.readLine();
 		    //执行SQL语句
