@@ -12,16 +12,15 @@ public class User {
 	{
 		System.out.println("学生预约模块");
 		try {
-			String rec1,rec2,rec3,rec4,rec5,rec6;
+			String rec1,rec2,rec3,rec4,rec5;
 			rec1 = is.readLine();
 			rec2 = is.readLine();
 			rec3 = is.readLine();
 			rec4 = is.readLine();
 			rec5 = is.readLine();
-			rec6 = is.readLine();
 		    //执行SQL语句
 		    Statement stmt = conn.createStatement();//创建语句对象，用以执行sql语言
-		    stmt.executeUpdate("insert lesson_table() values (" + rec1 + "," + rec2 + "," + rec3+ "," + rec4+ ",'" + rec5+ "'," + rec6 + ")");
+		    stmt.executeUpdate("insert lesson_table() values (" + rec1 + "," + rec2 + "," + rec3+ "," + rec4+ "," + rec5 + ")");
 		} catch (Exception e) {
 			System.out.println("Error:" + e);
 		}	
@@ -69,7 +68,7 @@ public class User {
 		    		os.flush();
 		    	}
 		    }
-		    if(rec.charAt(0) == '2'){
+		    else if(rec.charAt(0) == '2'){
 		    	ResultSet rs = stmt.executeQuery("select * from student_table where logname=" + rec);
 		    	if(rs.first()){
 		    		os.println(rec);
@@ -79,6 +78,10 @@ public class User {
 		    		os.println("no" + rec);
 		    		os.flush();
 		    	}
+		    }
+		    else{
+		    	os.println("no" + rec);
+	    		os.flush();
 		    }
 		} catch (Exception e) {
 			System.out.println("Error:" + e);

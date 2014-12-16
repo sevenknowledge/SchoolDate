@@ -16,6 +16,14 @@ public class Lesson {
 			}
 		}
 	}
+	public static void ginit(Object[][] lesson)
+	{
+		for(int i = 0;i < 3;i++){
+			for(int j = 0;j < 6;j++){
+				lesson[i][j] = "";
+			}
+		}
+	}
 	public static void show(Object[][] lesson,JTextArea t9)
 	{
 		for (int i = 0; i < lesson.length; i++) {

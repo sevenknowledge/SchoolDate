@@ -31,7 +31,7 @@ public class ClientGUI extends JFrame implements ActionListener {
 	JComboBox c1;
 	JButton b1, b2, b3, b4, b5, b6, b7, b8, b9, b10, b11, b12, b13, b14, b15,
 			b16, b17, b18, b19, b20, b21;
-	JRadioButton rb1, rb2, rb3, rb4, rb5, rb6, rb7;
+	JRadioButton rb1, rb2, rb3, rb4, rb5, rb6, rb7, rb8;
 	Socket socket;
 
 	public void clientGUI() {
@@ -221,9 +221,13 @@ public class ClientGUI extends JFrame implements ActionListener {
 		rb4 = new JRadioButton("查询学生");
 		p4.add(rb4);
 		rb4.setBounds(400, 200, 100, 50);
+		rb8 = new JRadioButton("预约我的");
+		p4.add(rb8);
+		rb8.setBounds(675, 200, 100, 50);
 		ButtonGroup bg2 = new ButtonGroup();
 		bg2.add(rb3);
 		bg2.add(rb4);
+		bg2.add(rb8);
 		l16 = new JLabel("第");
 		p4.add(l16);
 		l16.setBounds(175, 200, 25, 50);
@@ -243,7 +247,7 @@ public class ClientGUI extends JFrame implements ActionListener {
 		b12 = new JButton("查询");
 		b12.addActionListener(this);
 		p4.add(b12);
-		b12.setBounds(750, 200, 100, 50);
+		b12.setBounds(775, 200, 75, 50);
 		b8 = new JButton("上");
 		b8.addActionListener(this);
 		p4.add(b8);
@@ -796,12 +800,22 @@ public class ClientGUI extends JFrame implements ActionListener {
 							os.flush();
 							BufferedReader is = new BufferedReader(new InputStreamReader(
 									socket.getInputStream()));
-							get[0][0] = gt1;
-							get[0][1] = is.readLine();
-							get[0][2] = is.readLine();
-							get[0][3] = is.readLine();
-							get[0][4] = is.readLine();
-							get[0][5] = is.readLine();
+							if(gt1.charAt(0) == '1'){
+								get[0][0] = "老师号:"+gt1;
+								get[0][1] = "姓名:"+is.readLine();
+								get[0][2] = "学院:"+is.readLine();
+								get[0][3] = "地址:"+is.readLine();
+								get[0][4] = "电话:"+is.readLine();
+								get[0][5] = "邮箱:"+is.readLine();
+							}
+							else if(gt1.charAt(0) == '2'){
+								get[0][0] = "学号:"+gt1;
+								get[0][1] = "姓名:"+is.readLine();
+								get[0][2] = "学院:"+is.readLine();
+								get[0][3] = "地址:"+is.readLine();
+								get[0][4] = "电话:"+is.readLine();
+								get[0][5] = "邮箱:"+is.readLine();
+							}
 						}
 						if(checkstate == 1){
 							PrintWriter os = new PrintWriter(socket.getOutputStream());
@@ -814,12 +828,12 @@ public class ClientGUI extends JFrame implements ActionListener {
 							int count = Integer.parseInt(is.readLine());
 							System.out.println(count);
 							for(int i = 0;i < count;i++){
-								get[i][0] = is.readLine();
-								get[i][1] = is.readLine();
-								get[i][2] = is.readLine();
-								get[i][3] = is.readLine();
-								get[i][4] = is.readLine();
-								get[i][5] = is.readLine();
+								get[i][0] = "老师号:"+is.readLine();
+								get[i][1] = "姓名:"+is.readLine();
+								get[i][2] = "学院:"+is.readLine();
+								get[i][3] = "地址:"+is.readLine();
+								get[i][4] = "电话:"+is.readLine();
+								get[i][5] = "邮箱:"+is.readLine();
 							}
 						}
 						if(checkstate == 2){
@@ -833,12 +847,12 @@ public class ClientGUI extends JFrame implements ActionListener {
 							int count = Integer.parseInt(is.readLine());
 							System.out.println(count);
 							for(int i = 0;i < count;i++){
-								get[i][0] = is.readLine();
-								get[i][1] = is.readLine();
-								get[i][2] = is.readLine();
-								get[i][3] = is.readLine();
-								get[i][4] = is.readLine();
-								get[i][5] = is.readLine();
+								get[i][0] = "学号:"+is.readLine();
+								get[i][1] = "姓名:"+is.readLine();
+								get[i][2] = "学院:"+is.readLine();
+								get[i][3] = "地址:"+is.readLine();
+								get[i][4] = "电话:"+is.readLine();
+								get[i][5] = "邮箱:"+is.readLine();
 							}
 						}
 					}catch (Exception e1) {
@@ -971,11 +985,11 @@ public class ClientGUI extends JFrame implements ActionListener {
 			}
 		} else if (e.getSource() == b7) {
 			card.next(p0);
-			t24.setText(null);
-			t25.setText(null);
-			t26.setText(null);
-			t27.setText(null);
-			t28.setText(null);
+			t24.setText(t11.getText());
+			t25.setText(t12.getText());
+			t26.setText(t13.getText());
+			t27.setText(t14.getText());
+			t28.setText(t15.getText());
 			checkstate = 1;
 		} else if (e.getSource() == b8) {
 			if (rb3.isSelected()) {
@@ -1271,13 +1285,14 @@ public class ClientGUI extends JFrame implements ActionListener {
 							socket.getInputStream()));
 						int count = Integer.parseInt(is.readLine());
 						System.out.println(count);
+						Lesson.ginit(get);
 						for(int i = 0;i < count;i++){
-							get[i][0] = is.readLine();
-							get[i][1] = is.readLine();
-							get[i][2] = is.readLine();
-							get[i][3] = is.readLine();
-							get[i][4] = is.readLine();
-							get[i][5] = is.readLine();
+							get[i][0] = "学号:"+is.readLine();
+							get[i][1] = "姓名:"+is.readLine();
+							get[i][2] = "学院:"+is.readLine();
+							get[i][3] = "地址:"+is.readLine();
+							get[i][4] = "电话:"+is.readLine();
+							get[i][5] = "邮箱:"+is.readLine();
 						}
 					}catch(Exception e1) {
 						System.out.println("Error" + e1);
@@ -1293,6 +1308,35 @@ public class ClientGUI extends JFrame implements ActionListener {
 					Warning w = new Warning();
 					w.warning(this, "该用户不存在");
 				}
+			} else if (rb8.isSelected()) {
+				t23.setText(null);
+				try {
+					PrintWriter os = new PrintWriter(socket.getOutputStream());
+					os.println("a3");
+					os.flush();
+					os.println(user);
+					os.flush();
+					BufferedReader is = new BufferedReader(new InputStreamReader(
+						socket.getInputStream()));
+					int count = Integer.parseInt(is.readLine());
+					System.out.println(count);
+					for(int i = 0;i < count;i++){
+						String rev = is.readLine();
+						t23.append("第" + rev + "周"+" ");
+						rev = is.readLine();
+						t23.append("第" + rev + "天"+" ");
+						rev = is.readLine();
+						t23.append("第" + rev + "堂"+" ");
+						rev = is.readLine();
+						t23.append("学生号：" + rev+" ");
+						rev = is.readLine();
+						t23.append("学生名：" + rev);
+						t23.append("\n");
+					}
+				}catch(Exception e1) {
+					System.out.println("Error" + e1);
+				}
+				//发送user，服务器检索user的作息表中状态是“预约”的课时的信息返回客户端，写入t23
 			}
 		} else if (e.getSource() == b13) {
 			card.first(p0);
@@ -1332,17 +1376,29 @@ public class ClientGUI extends JFrame implements ActionListener {
 			}
 			Warning w = new Warning();
 			w.warning(this, "保存成功！");
-			if (checkstate == 1)
+			if (checkstate == 1){
+				t11.setText(gt1);
+				t12.setText(gt2);
+				t13.setText(gt3);
+				t14.setText(gt4);
+				t15.setText(gt5);
 				card.previous(p0);
-			else if (checkstate == 2)
+			}
+			else if (checkstate == 2){
+				t30.setText(gt1);
+				t31.setText(gt2);
+				t32.setText(gt3);
+				t33.setText(gt4);
+				t34.setText(gt5);
 				card.next(p0);
+			}
 		} else if (e.getSource() == b16) {
 			card.previous(p0);
-			t30.setText(null);
-			t31.setText(null);
-			t32.setText(null);
-			t33.setText(null);
-			t34.setText(null);
+			t24.setText(t30.getText());
+			t25.setText(t31.getText());
+			t26.setText(t32.getText());
+			t27.setText(t33.getText());
+			t28.setText(t34.getText());
 			checkstate = 2;
 		} else if (e.getSource() == b17) {
 			if (rb5.isSelected()) {
@@ -1440,13 +1496,14 @@ public class ClientGUI extends JFrame implements ActionListener {
 					int count = Integer.parseInt(is.readLine());
 					System.out.println(count);
 					if(count > 0){
+						Lesson.ginit(get);
 						for(int i = 0;i < count;i++){
-								get[i][0] = is.readLine();
-								get[i][1] = is.readLine();
-								get[i][2] = is.readLine();
-								get[i][3] = is.readLine();
-								get[i][4] = is.readLine();
-								get[i][5] = is.readLine();
+							get[i][0] = "老师号:"+is.readLine();
+							get[i][1] = "姓名:"+is.readLine();
+							get[i][2] = "学院:"+is.readLine();
+							get[i][3] = "地址:"+is.readLine();
+							get[i][4] = "电话:"+is.readLine();
+							get[i][5] = "邮箱:"+is.readLine();
 						}
 						t35.setText(null);
 						for (i = 0; i < get.length; i++) {
@@ -1484,7 +1541,9 @@ public class ClientGUI extends JFrame implements ActionListener {
 						rev = is.readLine();
 						t35.append("第" + rev + "堂"+" ");
 						rev = is.readLine();
-						t35.append("老师号：" + rev);
+						t35.append("老师号：" + rev+" ");
+						rev = is.readLine();
+						t35.append("老师名：" + rev);
 						t35.append("\n");
 					}
 				}catch(Exception e1) {
@@ -1677,38 +1736,11 @@ public class ClientGUI extends JFrame implements ActionListener {
 			gt4 = t40.getText();
 			gt5 = t30.getText();
 			// 在数据库中gt2的第gt1周周gt3第gt4课时的预约状态
-			try {
-				PrintWriter os = new PrintWriter(socket.getOutputStream());
-				os.println("b3");
-				os.flush();
-				os.println(gt2);
-				os.flush();
-				os.println(gt1);
-				os.flush();
-				os.println(gt3);
-				os.flush();
-				os.println(gt4);
-				os.flush();
-				BufferedReader is = new BufferedReader(new InputStreamReader(
-						socket.getInputStream()));
-				String rec;
-				rec = is.readLine();
-				System.out.println(rec);
-				System.out.println(gt2);
-				if(rec.equals(gt2)){
-					check1 = false;
-				}
-				else{
-					check1 = true;
-				}
-			}catch(Exception e1) {
-				System.out.println("Error" + e1);
-			}
-			// 若为闲/未预约，返回check1为true，修改为已预约状态并赋值gt5
-			if (check1) {
+			if(Integer.parseInt(gt1) <= 20&& Integer.parseInt(gt1) >=1 && Integer.parseInt(gt3)<=7 && Integer.parseInt(gt3)>=1 
+					&& Integer.parseInt(gt4)<=4 && Integer.parseInt(gt4) >=1){
 				try {
 					PrintWriter os = new PrintWriter(socket.getOutputStream());
-					os.println("da");
+					os.println("b3");
 					os.flush();
 					os.println(gt2);
 					os.flush();
@@ -1718,23 +1750,55 @@ public class ClientGUI extends JFrame implements ActionListener {
 					os.flush();
 					os.println(gt4);
 					os.flush();
-					os.println(gt5);
-					os.flush();
-					os.println(user);
-					os.flush();
+					BufferedReader is = new BufferedReader(new InputStreamReader(
+							socket.getInputStream()));
+					String rec;
+					rec = is.readLine();
+					System.out.println(rec);
+					System.out.println(gt2);
+					if(rec.equals(gt2)){
+						check1 = false;
+					}
+					else{
+						check1 = true;
+					}
 				}catch(Exception e1) {
 					System.out.println("Error" + e1);
 				}
-				lesson[Integer.parseInt(gt4)][Integer.parseInt(gt3)] = "有约";
-				t35.setText(null);
-				Lesson.show(lesson, t35);
-				gt5 = "有约";
+				// 若为闲/未预约，返回check1为true，修改为已预约状态并赋值gt5
+				if (check1) {
+					try {
+						PrintWriter os = new PrintWriter(socket.getOutputStream());
+						os.println("da");
+						os.flush();
+						os.println(gt2);
+						os.flush();
+						os.println(gt1);
+						os.flush();
+						os.println(gt3);
+						os.flush();
+						os.println(gt4);
+						os.flush();
+						os.println(user);
+						os.flush();
+					}catch(Exception e1) {
+						System.out.println("Error" + e1);
+					}
+					lesson[Integer.parseInt(gt4)][Integer.parseInt(gt3)] = "有约";
+					t35.setText(null);
+					Lesson.show(lesson, t35);
+					gt5 = "有约";
+					Warning w = new Warning();
+					w.warning(this, "预约成功");
+					t41.setText(gt5);
+				}else {
+					Warning w = new Warning();
+					w.warning(this, "老师忙");
+				}
+			}
+			else{
 				Warning w = new Warning();
-				w.warning(this, "预约成功");
-				t41.setText(gt5);
-			} else {
-				Warning w = new Warning();
-				w.warning(this, "老师忙");
+				w.warning(this, "输入非法");
 			}
 		} else if (e.getSource() == b21) {
 			card.first(p0);

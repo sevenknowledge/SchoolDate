@@ -17,29 +17,83 @@ public class Time {
 			rec = is.readLine();
 			System.out.println("课程查询模块");
 			Statement stmt = conn.createStatement();//创建语句对象，用以执行sql语言
-			ResultSet rs = stmt.executeQuery("select * from lesson_table where date_logname= '" + rec + "'");
-			rs.last();
-			int count = rs.getRow();
-			System.out.println(count);
-			os.println(count);
-			os.flush();
-			rs.first();
-			for(int i = 0;i < count;i++){
-				String send;
-				send = rs.getString("week");
-		    	os.println(send);
-		    	os.flush();
-		    	send = rs.getString("day");
-		    	os.println(send);
-		    	os.flush();
-		    	send = rs.getString("lesson");
-		    	os.println(send);
-		    	os.flush();
-		    	send = rs.getString("teacher_id");
-		    	os.println(send);
-		    	os.flush();
-		    	rs.next();
-			}
+			Statement stmt2 = conn.createStatement();
+			if(rec.charAt(0) == '1'){
+		    	ResultSet rs = stmt.executeQuery("select * from lesson_table where teacher_id= '" + rec + "'");
+		    	if(rs.first()){
+		    		rs.last();
+		    		int count = rs.getRow();
+		    		System.out.println(count);
+		    		os.println(count);
+		    		os.flush();
+		    		rs.first();
+		    		for(int i = 0;i < count;i++){
+		    			String send;
+		    			send = rs.getString("week");
+		    			os.println(send);
+		    			os.flush();
+		    			send = rs.getString("day");
+		    			os.println(send);
+		    			os.flush();
+		    			send = rs.getString("lesson");
+		    			os.println(send);
+		    			os.flush();
+		    			send = rs.getString("date_logname");
+		    			os.println(send);
+		    			os.flush();
+		    			ResultSet rs2 = stmt2.executeQuery("select * from student_table where logname = " + send);
+		    			rs2.first();
+		    			send = rs2.getString("name");
+		    			os.println(send);
+		    			os.flush();
+		    			rs2.close();
+		    			rs.next();
+		    		}    		
+		    	}
+		    	else{
+		    		int count = 0;
+		    		os.println(count);
+		    		os.flush();
+		    	}
+		    }
+			if(rec.charAt(0) == '2'){
+		    	ResultSet rs = stmt.executeQuery("select * from lesson_table where date_logname= '" + rec + "'");
+		    	if(rs.first()){
+		    		rs.last();
+		    		int count = rs.getRow();
+		    		System.out.println(count);
+		    		os.println(count);
+		    		os.flush();
+		    		rs.first();
+		    		for(int i = 0;i < count;i++){
+		    			String send;
+		    			send = rs.getString("week");
+		    			os.println(send);
+		    			os.flush();
+		    			send = rs.getString("day");
+		    			os.println(send);
+		    			os.flush();
+		    			send = rs.getString("lesson");
+		    			os.println(send);
+		    			os.flush();
+		    			send = rs.getString("teacher_id");
+		    			os.println(send);
+		    			os.flush();
+		    			ResultSet rs2 = stmt2.executeQuery("select * from teacher_table where logname = " + send);
+		    			rs2.first();
+		    			send = rs2.getString("name");
+		    			os.println(send);
+		    			os.flush();
+		    			rs2.close();
+		    			rs.next();
+		    		}
+		    	}
+		    	else{
+		    		int count = 0;
+		    		os.println(count);
+		    		os.flush();
+		    	}
+		    }
 		} catch (Exception e) {
 			System.out.println("Error:" + e);
 		}
@@ -141,14 +195,16 @@ public class Time {
 		    ResultSet rs = stmt.executeQuery("select * from lesson_table where teacher_id= " + rec1 + " and week=" + rec2 + " and day=" + rec3 + " and lesson=" + rec4);
 		    if(rs.first()){
 		    	String send;
-		    	send = rs.getString("date_student");
+		    	send = rs.getString("date_logname");
 		    	System.out.println("send赋值");
 		    	if(send != null){
-		    	os.println("有约");
-		    	os.flush();
-		    	send = rs.getString("date_student");
-		    	os.println(send);
-		    	os.flush();
+		    		ResultSet rs2 = stmt.executeQuery("select * from student_table where logname = " + send);
+		    		rs2.first();
+		    		os.println("有约");
+		    		os.flush();
+		    		send = rs2.getString("name");
+		    		os.println(send);
+		    		os.flush();
 		    	}
 		    	else{
 		    		os.println("繁忙");
@@ -207,7 +263,7 @@ public class Time {
 		    rs.first();
 		    for(int i = 0;i < count;i++){
 				String send;
-		    	send = rs.getString("date_student");
+		    	send = rs.getString("date_logname");
 		    	if(send == null)
 		    	{
 		    		os.println("1");
